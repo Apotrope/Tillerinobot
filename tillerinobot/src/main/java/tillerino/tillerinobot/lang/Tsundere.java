@@ -122,7 +122,7 @@ public class Tsundere implements Language {
 		 * message should suggest to contact @Tillerinobot or /u/Tillerino.
 		 */
 		return "Who the heck are you!? Are you one of those idiots that changes their name more often than their underwear? Ugh... contact Tillerino and say "
-		+ exceptionMarker + " if this seems to happen a lot."";
+		+ exceptionMarker + " if this seems to happen a lot.";
 	}
 
 	@Override
