@@ -11,8 +11,27 @@ import tillerino.tillerinobot.IRCBot.IRCBotUser;
 import tillerino.tillerinobot.RecommendationsManager.Recommendation;
 
 public class Tsundere implements Language {
-	//I HAVE NO IDEA WHAT I'M DOING
+	
+    //Random object, used in StringShuffler
 	static final Random rnd = new Random();
+    //Recent counters, reset if it's been over a day
+    int recentRecommendations = 0;
+    int recentHugs = 0;
+    
+	@Override
+	public void welcomeUser(IRCBotUser user, OsuApiUser apiUser,
+			long inactiveTime) {
+		if (inactiveTime < 60 * 1000) {
+			user.message("What is this? Peekaboo?");
+		} else if (inactiveTime < 24 * 60 * 60 * 1000) {
+			user.message("Back again? I'm just here because I have nothing else to do! Don't read into it!");
+		} else {
+            recentRecommendations = 0;
+            recentHugs = 0;
+			user.message("Where have you been, " + apiUser.getUsername()
+					+ "!? I-it's not like I missed you or anything...");
+		}
+	}    
 
 	@Override
 	public String unknownBeatmap() {
@@ -27,8 +46,8 @@ public class Tsundere implements Language {
 		 * here should indicated that if the error occurs repeatedly, Tillerino
 		 * should be contacted via Twitter @Tillerinobot or reddit /u/Tillerino
 		 */
-		return "If this keeps happening, tell Tillerino to look after incident "
-				+ marker + ".";
+		return "Huh? Why isn't this working? I can't imagine this being anything other than your fault."
+        + " Mention incident " + marker + " to Tillerino if this keeps happening.";
 	}
 
 	@Override
@@ -49,19 +68,6 @@ public class Tsundere implements Language {
 		 * displayed by itself, so it can be longer.
 		 */
 		return "What!? You can't possibly expect me to know the answer to that!";
-	}
-
-	@Override
-	public void welcomeUser(IRCBotUser user, OsuApiUser apiUser,
-			long inactiveTime) {
-		if (inactiveTime < 60 * 1000) {
-			user.message("What is this? Peekaboo?");
-		} else if (inactiveTime < 24 * 60 * 60 * 1000) {
-			user.message("Back again? I'm just here because I have nothing else to do! Don't read into it!");
-		} else {
-			user.message("Where have you been, " + apiUser.getUsername()
-					+ "!? I-it's not like I missed you or anything...");
-		}
 	}
 
 	@Override
@@ -133,7 +139,7 @@ public class Tsundere implements Language {
 		 * Rather than admiting that an error occurred, this message should make
 		 * an excuse why the request could not be fulfilled.
 		 */
-		return "Did you say something? It's not l-like I care if ";
+		return "Did you say something? It's not l-like I care what you have to say, but you should say it again so you can pretend I do.";
 	}
 
 	@Override
@@ -142,7 +148,7 @@ public class Tsundere implements Language {
 		 * TODO
 		 * Response to the !complain command.
 		 */
-		return "";
+		return "Whaaaat!? How could you say something like... oh, that beatmap? Actually that's there because I hated it and wanted to test you. Aren't you glad having something in common with me?";
 	}
 	
 	int countHugs = 0;
@@ -172,8 +178,7 @@ public class Tsundere implements Language {
 		 * TODO
 		 * Response to !help command.
 		 */
-		return null;
-        //Feeling helpless (as always)?  Check [url] for status and updates, and [url] for commands. Remember, there are no stupid questions, only stupid people, like you.
+		return "Feeling helpless (as always)?  Check https://twitter.com/Tillerinobot for status and updates, and https://github.com/Tillerino/Tillerinobot/wiki for commands. Where would you be without me here to rescue you?";
 	}
 
 	@Override
@@ -182,8 +187,7 @@ public class Tsundere implements Language {
 		 * TODO
 		 * Response to !faq command.
 		 */
-		return null;
-        //Here, Tillerino made this 
+		return "Really, every answer on this list should be intuitively obvious, but it's understandable if -you- need to read it: https://github.com/Tillerino/Tillerinobot/wiki/FAQ";
 	}
 
 	@Override
@@ -203,6 +207,8 @@ public class Tsundere implements Language {
         
         //Want you gone x3, why are you being like this, you're not thinking, dummy dummy, baka go home, lie lie lie
 	}
+    
+    StringShuffler rankRestricted = new StringShuffler(rnd);
 
 	@Override
 	public String featureRankRestricted(String feature, int minRank, OsuApiUser user) {
@@ -210,9 +216,7 @@ public class Tsundere implements Language {
 		 * TODO
 		 * A feature is rank restricted.
 		 */
-		return null;
-        //Filthy casual, don't even try until you're at least rank 25000
-        //Sorry, this feature is only available for people that can actually play osu!
+		return "Sorry, " + feature + " is only available for people that can actually play osu!. Passing rank " + minRank + " will work, not that you have any hope of ever getting there.";
 	}
 
 	@Override
@@ -222,8 +226,7 @@ public class Tsundere implements Language {
 		 * The user requested a recommendation and both gave a mod and the nomod
 		 * option.
 		 */
-		return null;
-         //Contradiction
+		return "What is this? Schrodinger's mod? I have a recommendation, but the superposition would collapse as soon as it was observed. It's not like I like you enough to break the laws of physics anyways.";
 	}
 
 	@Override
@@ -233,9 +236,7 @@ public class Tsundere implements Language {
 		 * The current recommendations sampler is empty.
 		 * "try again to start over".
 		 */
-		return " Let's start over again.";
-        //I'm SURE you played all of those
-        //To double check
+		return "I'm SURE you played all of those.";
 	}
 
 	@Override
@@ -245,12 +246,7 @@ public class Tsundere implements Language {
 		 * The requested beatmap is not ranked.
 		 */
 		return "";
-        //Why don't 
-        // Listing: 95% [0pp], 98% [0pp] 
-        //Unranked maps for PP, great idea
 	}
-
-	StringShuffler commentNP = new StringShuffler(rnd);
 
 	@Override
 	public void optionalCommentOnNP(IRCBotUser user, OsuApiUser apiUser, BeatmapMeta meta) {
@@ -261,8 +257,6 @@ public class Tsundere implements Language {
             user.message("Playing that won't impress me much... n-n-not that I'd want you to.");
         }
 	}
-
-	StringShuffler commentWith = new StringShuffler(rnd);
 	
 	@Override
 	public void optionalCommentOnWith(IRCBotUser user, OsuApiUser apiUser, BeatmapMeta meta) {
@@ -274,20 +268,18 @@ public class Tsundere implements Language {
 		}
 	}
 	
-	int countRecommendations = 0;
-
 	@Override
 	public void optionalCommentOnRecommendation(IRCBotUser user, OsuApiUser apiUser, Recommendation meta) {
-		countRecommendations++;
-		if(countRecommendations == 7) {
+		recentRecommendations++;
+		if(recentRecommendations == 7) {
 			user.message("I have lots of free time. I would never pick out maps just because I liked you... h-h-hypothetically speaking.");
-		} else if(countRecommendations == 17) {
+		} else if(recentRecommendations == 17) {
 			user.message("You know, it's a privilege to talk to me this much, not a right.");
-		} else if(countRecommendations == 37) {
+		} else if(recentRecommendations == 37) {
 			user.message("How would you even play this game if I wasn't telling you what to do?");
-		} else if(countRecommendations == 73) {
+		} else if(recentRecommendations == 73) {
 			user.message("I would have had you arrested for harassment a long time ago if I didn't lov... I wasn't saying anything.");
-		} else if(countRecommendations == 173) {
+		} else if(recentRecommendations == 173) {
 			user.message("Just can't leave me alone, huh? I guess t-that's okay. But don't you dare tell anyone!");
 		}
 	}
