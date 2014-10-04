@@ -12,6 +12,7 @@ import javax.inject.Singleton;
 
 import tillerino.tillerinobot.lang.Default;
 import tillerino.tillerinobot.lang.Language;
+import tillerino.tillerinobot.lang.Tsundere;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -40,7 +41,8 @@ import lombok.extern.slf4j.Slf4j;
 public class UserDataManager {
 	public static class UserData {
 		public enum LanguageIdentifier {
-			Default(Default.class);
+			Default(Default.class),
+			Tsundere(Tsundere.class);
 			
 			Class<? extends Language> cls;
 
