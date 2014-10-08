@@ -3,24 +3,17 @@ import static org.mockito.Mockito.*;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Answers;
 import org.mockito.InOrder;
-import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
-import org.tillerino.osuApiModel.OsuApiBeatmap;
+import org.mockito.Spy;
 import org.tillerino.osuApiModel.OsuApiUser;
 
-import tillerino.tillerinobot.BeatmapMeta.PercentageEstimates;
 import tillerino.tillerinobot.IRCBot.IRCBotUser;
 import tillerino.tillerinobot.IRCBot.Pinger;
+<<<<<<< HEAD
 import tillerino.tillerinobot.RecommendationsManager.BareRecommendation;
 import tillerino.tillerinobot.RecommendationsManager.GivenRecommendation;
 import tillerino.tillerinobot.RecommendationsManager.Model;
@@ -153,10 +146,17 @@ public class IRCBotTest {
 		}
 	}
 	
+=======
+import tillerino.tillerinobot.rest.BotInfoService;
+
+public class IRCBotTest {
+>>>>>>> upstream/tsundere
 	@Test
 	public void testVersionMessage() throws IOException, SQLException, UserException {
 		IRCBot bot = getTestBot(backend);
 		
+		backend.hintUser("user", false, 0, 0);
+
 		IRCBotUser user = mock(IRCBotUser.class);
 		when(user.getNick()).thenReturn("user");
 		when(user.message(anyString())).thenReturn(true);
@@ -166,7 +166,7 @@ public class IRCBotTest {
 		verify(backend, times(1)).setLastVisitedVersion(anyString(), eq(IRCBot.currentVersion));
 		
 		user = mock(IRCBotUser.class);
-		when(user.getNick()).thenReturn("");
+		when(user.getNick()).thenReturn("user");
 		
 		bot.processPrivateMessage(user, "!recommend");
 		verify(user, never()).message(IRCBot.versionMessage);
@@ -176,25 +176,19 @@ public class IRCBotTest {
 	public void testWrongStrings() throws IOException, SQLException, UserException {
 		IRCBot bot = getTestBot(backend);
 		
+		backend.hintUser("user", false, 100, 1000);
+		doReturn(IRCBot.currentVersion).when(backend).getLastVisitedVersion(anyString());
+
 		IRCBotUser user = mock(IRCBotUser.class);
 		when(user.getNick()).thenReturn("user");
-		
-		when(user.message(anyString())).then(new Answer<Boolean>() {
-
-			@Override
-			public Boolean answer(InvocationOnMock invocation) throws Throwable {
-				System.out.println(invocation.getArguments()[0]);
-				return true;
-			}
-		});
 		
 		InOrder inOrder = inOrder(user);
 
 		bot.processPrivateMessage(user, "!recommend");
-		inOrder.verify(user).message(contains("artist - title [version]"));
+		inOrder.verify(user).message(contains("http://osu.ppy.sh"));
 		
 		bot.processPrivateMessage(user, "!r");
-		inOrder.verify(user).message(contains("artist - title [version]"));
+		inOrder.verify(user).message(contains("http://osu.ppy.sh"));
 		
 		bot.processPrivateMessage(user, "!recccomend");
 		inOrder.verify(user).message(contains("!help"));
@@ -240,9 +234,9 @@ public class IRCBotTest {
 	}
 	
 	IRCBot getTestBot(BotBackend backend) {
-		IRCBot ircBot = new IRCBot(backend, "server", 1, "botuser", null, null, false, false, null);
-		ircBot.pinger = mock(Pinger.class);
-		ircBot.manager = spy(ircBot.manager);
+		IRCBot ircBot = new IRCBot(backend, spy(new RecommendationsManager(
+				backend)), mock(BotInfoService.class), new UserDataManager(
+				backend), mock(Pinger.class), false);
 		return ircBot;
 	}
 	
@@ -251,12 +245,14 @@ public class IRCBotTest {
 		MockitoAnnotations.initMocks(this);
 	}
 	
-	@Mock(answer=Answers.CALLS_REAL_METHODS)
-	IRCBotTest.TestBackend backend;
+	@Spy
+	TestBackend backend = new TestBackend(false);
 	
 	@Test
 	public void testHugs() throws Exception {
 		IRCBot bot = getTestBot(backend);
+
+		backend.hintUser("donator", true, 0, 0);
 
 		IRCBotUser botUser = mock(IRCBotUser.class);
 		when(botUser.getNick()).thenReturn("donator");
