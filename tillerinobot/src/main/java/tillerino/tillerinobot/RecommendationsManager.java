@@ -16,8 +16,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;
-import javax.inject.Inject;
-import javax.inject.Singleton;
 
 import lombok.Data;
 
@@ -36,7 +34,6 @@ import com.google.common.cache.LoadingCache;
  * 
  * @author Tillerino
  */
-@Singleton
 public class RecommendationsManager {
 	/**
 	 * Recommendation as returned by the backend. Needs to be enriched before being displayed.
@@ -171,7 +168,6 @@ public class RecommendationsManager {
 	
 	BotBackend backend;
 
-	@Inject
 	public RecommendationsManager(BotBackend backend) {
 		this.backend = backend;
 	}

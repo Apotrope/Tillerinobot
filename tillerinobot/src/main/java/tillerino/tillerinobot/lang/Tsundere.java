@@ -7,10 +7,6 @@ import org.tillerino.osuApiModel.Mods;
 import org.tillerino.osuApiModel.OsuApiUser;
 
 import tillerino.tillerinobot.BeatmapMeta;
-<<<<<<< HEAD
-=======
-import tillerino.tillerinobot.BeatmapMeta.PercentageEstimates;
->>>>>>> upstream/tsundere
 import tillerino.tillerinobot.IRCBot.IRCBotUser;
 import tillerino.tillerinobot.RecommendationsManager.Recommendation;
 
@@ -43,43 +39,18 @@ public class Tsundere implements Language {
 	}
 
 	@Override
-<<<<<<< HEAD
 	public String exception(String marker) {
 		/*
 		 * TODO
 		 * An exception occurred and has been logged with a marker. The message
 		 * here should indicated that if the error occurs repeatedly, Tillerino
 		 * should be contacted via Twitter @Tillerinobot or reddit /u/Tillerino
-=======
-	public String internalException(String marker) {
-		/*
-		 * TODO
-		 * An internal exception occurred and has been logged with a
-		 * marker. The message here should indicate to contact Tillerino
-		 * contacted via Twitter @Tillerinobot or reddit /u/Tillerino
->>>>>>> upstream/tsundere
 		 */
 		return "Huh? Why isn't this working? I can't imagine this being anything other than your fault."
         + " Mention incident " + marker + " to Tillerino if this keeps happening.";
 	}
 
 	@Override
-<<<<<<< HEAD
-=======
-	public String externalException(String marker) {
-		/*
-		 * TODO
-		 * An exception occurred while communicating with the osu api and
-		 * has been logged with a marker. The message here should indicate that
-		 * this is no cause for concern and to try again, but to contact
-		 * Tillerino via Twitter @Tillerinobot or reddit /u/Tillerino if the
-		 * message pops up repeatedly.
-		 */
-		return null;
-	}
-
-	@Override
->>>>>>> upstream/tsundere
 	public String noInformationForModsShort() {
 		/*
 		 * TODO
@@ -150,7 +121,6 @@ public class Tsundere implements Language {
 	}
 
 	@Override
-<<<<<<< HEAD
 	public String unresolvableName(String exceptionMarker, String name) {
 		/*
 		 * TODO
@@ -162,8 +132,6 @@ public class Tsundere implements Language {
 	}
 
 	@Override
-=======
->>>>>>> upstream/tsundere
 	public String excuseForError() {
 		/*
 		 * TODO
@@ -282,51 +250,20 @@ public class Tsundere implements Language {
 
 	@Override
 	public void optionalCommentOnNP(IRCBotUser user, OsuApiUser apiUser, BeatmapMeta meta) {
-<<<<<<< HEAD
         double typicalPP = (apiUser.pp/20.0);
         if((meta.get95percentpp)/typicalPP > 2.0) {
             user.message("Are you serious!? If that map doesn't kill you, I will.");
         } else if((meta.get100percentpp)/typicalPP < 0.333) {
-=======
-		if (!(meta.getEstimates() instanceof PercentageEstimates)) {
-			return;
-		}
-		PercentageEstimates estimates = (PercentageEstimates) meta
-				.getEstimates();
-
-		double typicalPP = (apiUser.getPp() / 20.0);
-		if (estimates.getPPForAcc(.95) / typicalPP > 2.0) {
-            user.message("Are you serious!? If that map doesn't kill you, I will.");
-		} else if (estimates.getPPForAcc(1) / typicalPP < 0.333) {
->>>>>>> upstream/tsundere
             user.message("Playing that won't impress me much... n-n-not that I'd want you to.");
         }
 	}
 	
 	@Override
 	public void optionalCommentOnWith(IRCBotUser user, OsuApiUser apiUser, BeatmapMeta meta) {
-<<<<<<< HEAD
 		double typicalPP = (apiUser.pp/20);
 		if((meta.get95percentpp)/typicalPP > 2.0) {
 			user.message("You idiot! You're going to get hurt trying mods like that!");
 		} else if((meta.get100percentpp)/typicalPP < 0.5) {
-=======
-		/*
-		 * the following checks are probably redundant, but they don't hurt
-		 * anyone either.
-		 */
-
-		if (!(meta.getEstimates() instanceof PercentageEstimates)) {
-			return;
-		}
-		PercentageEstimates estimates = (PercentageEstimates) meta
-				.getEstimates();
-
-		double typicalPP = (apiUser.getPp() / 20);
-		if (estimates.getPPForAcc(.95) / typicalPP > 2.0) {
-			user.message("You idiot! You're going to get hurt trying mods like that!");
-		} else if (estimates.getPPForAcc(1) / typicalPP < 0.5) {
->>>>>>> upstream/tsundere
 			user.message("If you wanted to be treated like a baby, you could just ask... no, go ahead and play.");
 		}
 	}
@@ -346,44 +283,5 @@ public class Tsundere implements Language {
 			user.message("Just can't leave me alone, huh? I guess t-that's okay. But don't you dare tell anyone!");
 		}
 	}
-<<<<<<< HEAD
-=======
-	
-	transient boolean changed;
-
-	@Override
-	public boolean isChanged() {
-		return changed;
-	}
-
-	@Override
-	public void setChanged(boolean changed) {
-		this.changed = changed;
-	}
-
-	@Override
-	public String invalidAccuracy(String acc) {
-		// TODO The given accuracy is invalid.
-		return null;
-	}
-
-	@Override
-	public String noPercentageEstimates() {
-		// TODO Can't find percentage estimates and fallback is not an option.
-		return null;
-	}
-
-	@Override
-	public void optionalCommentOnLanguage(IRCBotUser user, OsuApiUser apiUser) {
-		// TODO The user has chosen this language. Say something to acknowledge
-		// that!
-	}
-
-	@Override
-	public String invalidChoice(String invalid, String choices) {
-		// TODO The user has made an invalid choice.
-		return null;
-	}
->>>>>>> upstream/tsundere
 
 }

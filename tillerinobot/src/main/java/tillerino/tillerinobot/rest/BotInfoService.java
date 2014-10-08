@@ -1,26 +1,19 @@
 package tillerino.tillerinobot.rest;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.pircbotx.PircBotX;
-
 import lombok.Data;
-import tillerino.tillerinobot.BotRunner;
+import tillerino.tillerinobot.BotAPIServer;
 
-@Singleton
 @Path("/botinfo")
 public class BotInfoService {
-	private BotRunner bot;
-
-	@Inject
-	public BotInfoService(BotRunner bot) {
-		super();
-		this.bot = bot;
+	private BotAPIServer server;
+	
+	public BotInfoService(BotAPIServer server) {
+		this.server = server;
 	}
 
 	@Data
@@ -37,9 +30,8 @@ public class BotInfoService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public BotInfo botinfo() {
-		PircBotX pircBot = bot.getBot();
-		if (pircBot != null) {
-			botInfo.isConnected = pircBot.isConnected();
+		if(server.bot != null) {
+			botInfo.isConnected = server.bot.isConnected();
 		} else {
 			botInfo.isConnected = false;
 		}

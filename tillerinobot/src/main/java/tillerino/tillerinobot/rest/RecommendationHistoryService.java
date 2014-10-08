@@ -4,25 +4,21 @@ import java.sql.SQLException;
 import java.util.Collections;
 import java.util.List;
 
-import javax.inject.Inject;
-import javax.inject.Singleton;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import tillerino.tillerinobot.BotBackend;
+import tillerino.tillerinobot.BotAPIServer;
 import tillerino.tillerinobot.RecommendationsManager.GivenRecommendation;
 
-@Singleton
 @Path("/history")
 public class RecommendationHistoryService {
-	private BotBackend backend;
+	private BotAPIServer server;
 	
-	@Inject
-	public RecommendationHistoryService(BotBackend server) {
-		this.backend = server;
+	public RecommendationHistoryService(BotAPIServer server) {
+		this.server = server;
 	}
 
 	@GET
@@ -30,11 +26,11 @@ public class RecommendationHistoryService {
 	public List<GivenRecommendation> getHistory(@QueryParam("k") String tillerinobotKey) throws SQLException {
 		System.out.println(tillerinobotKey);
 		
-		Integer userId = backend.resolveUserKey(tillerinobotKey);
+		Integer userId = server.backend.resolveUserKey(tillerinobotKey);
 		
 		if(userId == null)
 			return Collections.emptyList();
 		
-		return backend.loadGivenRecommendations(userId);
+		return server.backend.loadGivenRecommendations(userId);
 	}
 }

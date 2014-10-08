@@ -44,27 +44,23 @@ public class BeatmapMeta {
 
 	static DecimalFormat noDecimalsFormat = new DecimalFormat("#");
 
-	public String formInfoMessage(boolean formLink, String addition, int hearts, Double acc) {
-		
+	public String formInfoMessage(boolean formLink, String addition, int hearts) {
 		String beatmapName = getBeatmap().getArtist() + " - " + getBeatmap().getTitle()
 				+ " [" + getBeatmap().getVersion() + "]";
 		if(formLink) {
 			beatmapName = "[http://osu.ppy.sh/b/" + getBeatmap().getId() + " " + beatmapName + "]";
 		}
 		
-		long mods = 0;
-		
 		if(getEstimates() instanceof PercentageEstimates) {
 			PercentageEstimates percentageEstimates = (PercentageEstimates) getEstimates();
-			mods = percentageEstimates.getMods();
 			if(percentageEstimates.getMods() != 0) {
-				String modsString = "";
+				String mods = "";
 				for(Mods mod : Mods.getMods(percentageEstimates.getMods())) {
 					if(mod.isEffective()) {
-						modsString += mod.getShortName();
+						mods += mod.getShortName();
 					}
 				}
-				beatmapName += " " + modsString;
+				beatmapName += " " + mods;
 			}
 		}
 
@@ -91,25 +87,20 @@ public class BeatmapMeta {
 		} else if (estimates instanceof PercentageEstimates) {
 			PercentageEstimates percentageEstimates = (PercentageEstimates) estimates;
 
-			if(acc != null) {
-				estimateMessage += format.format(acc * 100) + "%: "
-						+ noDecimalsFormat.format(percentageEstimates.getPPForAcc(acc)) + "pp";
-			} else {
-				estimateMessage += "95%: " + noDecimalsFormat.format(percentageEstimates.getPPForAcc(.95)) + "pp";
-				estimateMessage += " | 98%: " + noDecimalsFormat.format(percentageEstimates.getPPForAcc(.98)) + "pp";
-				estimateMessage += " | 99%: " + noDecimalsFormat.format(percentageEstimates.getPPForAcc(.99)) + "pp";
-				estimateMessage += " | 100%: " + noDecimalsFormat.format(percentageEstimates.getPPForAcc(1)) + "pp";
-			}
+			estimateMessage += "95%: " + noDecimalsFormat.format(percentageEstimates.getPPForAcc(.95)) + "pp";
+			estimateMessage += " | 98%: " + noDecimalsFormat.format(percentageEstimates.getPPForAcc(.98)) + "pp";
+			estimateMessage += " | 99%: " + noDecimalsFormat.format(percentageEstimates.getPPForAcc(.99)) + "pp";
+			estimateMessage += " | 100%: " + noDecimalsFormat.format(percentageEstimates.getPPForAcc(1)) + "pp";
+			
 			if(percentageEstimates.isShaky()) {
 				estimateMessage += " (rough estimates)";
 			}
 		}
 		
-		estimateMessage += " | " + secondsToMinuteColonSecond(getBeatmap().getTotalLength(mods));
-		if(mods == 0)
-			estimateMessage += " ★ " + format.format(getBeatmap().getStarDifficulty());
-		estimateMessage += " ♫ " + format.format(getBeatmap().getBpm(mods));
-		estimateMessage += " AR" + format.format(getBeatmap().getApproachRate(mods));
+		estimateMessage += " | " + secondsToMinuteColonSecond(getBeatmap().getTotalLength());
+		estimateMessage += " ★ " + format.format(getBeatmap().getStarDifficulty());
+		estimateMessage += " ♫ " + format.format(getBeatmap().getBpm());
+		estimateMessage += " AR" + format.format(getBeatmap().getApproachRate());
 
 		String heartString = hearts > 0 ? " " + StringUtils.repeat('♥', hearts) : "";
 

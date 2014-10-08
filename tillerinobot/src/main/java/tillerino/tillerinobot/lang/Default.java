@@ -18,23 +18,9 @@ public class Default implements Language {
 	}
 
 	@Override
-<<<<<<< HEAD
 	public String exception(String marker) {
 		return "Something went wrong. If this keeps happening, tell Tillerino to look after incident "
 				+ marker + ", please.";
-=======
-	public String internalException(String marker) {
-		return "Ugh... Looks like human Tillerino screwed up my wiring."
-				+ "If he doesn't notice soon, could you inform him? @Tillerino or /u/Tillerino? (reference "
-				+ marker + ")";
-	}
-
-	@Override
-	public String externalException(String marker) {
-		return "What's going on? I'm only getting nonsense from the osu server. Can you tell me what this is supposed to mean? 0011101001010000"
-				+ " I can try again if you like, but if this doesn't go away, could you inform human Tillerino? @Tillerino or /u/Tillerino? (reference "
-				+ marker + ")";
->>>>>>> upstream/tsundere
 	}
 
 	@Override
@@ -72,13 +58,8 @@ public class Default implements Language {
 
 	@Override
 	public String unknownCommand(String command) {
-<<<<<<< HEAD
 		return "unknown command " + command
 				+ ". type !help if you need help!";
-=======
-		return "unknown command \"" + command
-				+ "\". type !help if you need help!";
->>>>>>> upstream/tsundere
 	}
 
 	@Override
@@ -88,11 +69,7 @@ public class Default implements Language {
 
 	@Override
 	public String malformattedMods(String mods) {
-<<<<<<< HEAD
 		return "those mods don't look right. mods can be any combination of DT HR HD HT EZ NC FL SO NF. Combine them without any spaces or special chars. Example: !with HDHR, !with DTEZ";
-=======
-		return "Those mods don't look right. Mods can be any combination of DT HR HD HT EZ NC FL SO NF. Combine them without any spaces or special chars. Example: !with HDHR, !with DTEZ";
->>>>>>> upstream/tsundere
 	}
 
 	@Override
@@ -110,26 +87,9 @@ public class Default implements Language {
 		return "Try this map with " + Mods.toShortNamesContinuous(mods);
 	}
 
-<<<<<<< HEAD
 	@Override
 	public String unresolvableName(String exceptionMarker, String name) {
 		return "Your name is confusing me. Did you recently change it? If not, pls contact me and say " + exceptionMarker;
-=======
-	/**
-	 * The user's IRC nick name could not be resolved to an osu user id. The
-	 * message should suggest to contact @Tillerinobot or /u/Tillerino.
-	 * 
-	 * @param exceptionMarker
-	 *            a marker to reference the created log entry. six or eight
-	 *            characters.
-	 * @param ircNick
-	 *            the irc nick which could not be resolved
-	 * @return
-	 */
-	public String unresolvableName(String exceptionMarker, String name) {
-		return "Your name is confusing me. Are you banned? If not, pls contact @Tillerino or /u/Tillerino (reference "
-				+ exceptionMarker + ")";
->>>>>>> upstream/tsundere
 	}
 
 	@Override
@@ -172,11 +132,7 @@ public class Default implements Language {
 	
 	@Override
 	public String mixedNomodAndMods() {
-<<<<<<< HEAD
 		return "nomod with mods?";
-=======
-		return "What do you mean nomod with mods?";
->>>>>>> upstream/tsundere
 	}
 	
 	@Override
@@ -186,11 +142,7 @@ public class Default implements Language {
 
 	@Override
 	public String notRanked() {
-<<<<<<< HEAD
 		return "looks like that beatmap is not ranked.";
-=======
-		return "Looks like that beatmap is not ranked.";
->>>>>>> upstream/tsundere
 	}
 
 	@Override
@@ -210,38 +162,4 @@ public class Default implements Language {
 			OsuApiUser apiUser, Recommendation meta) {
 		// regular Tillerino doesn't comment on this
 	}
-<<<<<<< HEAD
-=======
-	
-	@Override
-	public boolean isChanged() {
-		return false;
-	}
-
-	@Override
-	public void setChanged(boolean changed) {
-		
-	}
-
-	@Override
-	public String invalidAccuracy(String acc) {
-		return "Invalid accuracy: \"" + acc + "\"";
-	}
-
-	@Override
-	public String noPercentageEstimates() {
-		return "Sorry, I can't that information at this time.";
-	}
-
-	@Override
-	public void optionalCommentOnLanguage(IRCBotUser user, OsuApiUser apiUser) {
-		user.message("So you like me just the way I am :)");
-	}
-
-	@Override
-	public String invalidChoice(String invalid, String choices) {
-		return "I'm sorry, but \"" + invalid
-				+ "\" does not compute. Try one of these: " + choices + "!";
-	}
->>>>>>> upstream/tsundere
 }
