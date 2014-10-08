@@ -3,6 +3,7 @@ package tillerino.tillerinobot;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Response;
@@ -16,25 +17,19 @@ import tillerino.tillerinobot.rest.RecommendationHistoryService;
  * @author Tillerino
  */
 public class BotAPIServer extends Application {
-	public IRCBot bot;
-	public BotBackend backend;
-	
-	public BotAPIServer(BotBackend backend) {
-		this.backend = backend;
-	}
+	@Inject
+	public BotAPIServer(BotRunner bot, BotBackend backend,
+			BotInfoService botInfo, RecommendationHistoryService history,
+			BeatmapInfoService beatmapInfo) {
+		super();
 
-	BotInfoService botInfo = new BotInfoService(this);
-	RecommendationHistoryService history = new RecommendationHistoryService(this);
-	BeatmapInfoService beatmapInfo = new BeatmapInfoService(this);
-	
-	Set<Object> singletons = new HashSet<>();
-	
-	{
 		singletons.add(botInfo);
 		singletons.add(history);
 		singletons.add(beatmapInfo);
 	}
 	
+	Set<Object> singletons = new HashSet<>();
+
 	@Override
 	public Set<Object> getSingletons() {
 		return singletons;
@@ -45,10 +40,6 @@ public class BotAPIServer extends Application {
 	@Override
 	public Set<Class<?>> getClasses() {
 		return classes;
-	}
-	
-	public void setBot(IRCBot bot) {
-		this.bot = bot;
 	}
 
 	public static void throwUnautorized(boolean authorized) throws WebApplicationException {
