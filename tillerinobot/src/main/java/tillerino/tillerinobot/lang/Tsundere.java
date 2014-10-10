@@ -15,28 +15,61 @@ public class Tsundere implements Language {
 	
 	//Random object, used in StringShuffler
 	static final Random rnd = new Random();
-	//Recent counters, reset if it's been over a day
+	//Recent counters, reset if inactive for a while
 	int recentRecommendations = 0;
 	int recentHugs = 0;
 	
+	StringShuffler welcomeUserShortSS = new StringShuffler(rnd);
+	StringShuffler welcomeUserSS = new StringShuffler(rnd);
+	StringShuffler welcomeUserLongSS = new StringShuffler(rnd);
+	
 	@Override
 	public void welcomeUser(IRCBotUser user, OsuApiUser apiUser, long inactiveTime) {
-		//TODO potentially more replies + shuffler
-		if (inactiveTime < 60 * 1000) {
-			user.message("What is this? Peekaboo?");
-		} else if (inactiveTime < 24 * 60 * 60 * 1000) {
-			user.message("Back again? I'm just here because I have nothing else to do! Don't read into it!");
-		} else {
+		String username = apiUser.getUsername();
+		String greeting = "";
+		//Greetings for <4 minutes, normal, and >4 days
+		if (inactiveTime < 4 * 60 * 1000) {
+			greeting = welcomeUserShortSS.get(
+				"What is this? Peekaboo?",
+				"It hasn't even been 5 minutes...",
+				"Today, " + username + " worked on their disappearing act."
+			);
+		} else if (inactiveTime < 4l * 24 * 60 * 60 * 1000) { 
+			greeting = welcomeUserSS.get(
+				//TODO more normal welcome messages
+				"Back again? I'm just here because I have nothing else to do! Don't read into it!",
+				"H-hey...",
+				"♫ Home again, home again, jiggety-jig ♫ .... What?",
+				"4",
+				"5",
+				"6",
+				"7"
+			);
+		} else { 
+			greeting = welcomeUserLongSS.get(
+				"Where have you been, " + username + "!? I-it's not like I missed you or anything...",
+				"How was your vacation, " + username + "?",
+				"Ugh! Do you have any idea how long " + inactiveTime + " milliseconds is !?"
+			);
+		}
+		user.message(greeting);
+		//Recent counter reset (4 hours)
+		if (inactiveTime > 4 * 60 * 60 * 1000) {
 			recentRecommendations = 0;
 			recentHugs = 0;
-			user.message("Where have you been, " + apiUser.getUsername()
-					+ "!? I-it's not like I missed you or anything...");
-		}
+		}		
 	}
+	
+	StringShuffler unknownBeatmapSS = new StringShuffler(rnd);
 
 	@Override
 	public String unknownBeatmap() {
-		return "Are you stupid? No one plays that map!";
+		return unknownBeatmapSS.get(
+			"Are you stupid? No one plays that map!",
+			"Oh, really? Never heard of it.",
+			"Yeah right, call me when you manage to get pp with that.",
+			"HuehuEhueHuEhuehUeHuehuehUeHuehuehuE~ Oh, did you need something?"
+		);	
 	}
 
 	@Override
@@ -51,15 +84,27 @@ public class Tsundere implements Language {
 		+ " If the server doesn't shut up, ask @Tillerino or /u/Tillerino (reference " + marker + ") to take care of it.";
 	}
 
+	StringShuffler noInformationForModsShortSS = new StringShuffler(rnd);
+	
 	@Override
 	public String noInformationForModsShort() {
-		return "Those mods? You wish!";
+		return noInformationForModsShortSS.get(
+			"Those mods? You wish!",
+			"What are these \"mods\" you speak of?",
+			"Nomod loves you"
+		);
 	}
 
+	StringShuffler noInformationForModsSS = new StringShuffler(rnd);
+	
 	@Override
 	public String noInformationForMods() {
-		//TODO potentially more replies + shuffler
-		return "What!? You can't possibly expect me to know the answer to that!";
+		return noInformationForModsSS.get(
+			"What!? You can't possibly expect me to know the answer to that!",
+			"I'd tell you, but then I'd have to kill you.",
+			"Haha, good joke. Very funny.",
+			"INSUFFICIENT DATA FOR MEANINGFUL ANSWER."
+		);
 	}
 
 	@Override
@@ -77,19 +122,27 @@ public class Tsundere implements Language {
 		return "You didn't even mention a song. Wait, were you trying to use those mods on ME!?";
 	}
 
-	StringShuffler anyMods = new StringShuffler(rnd);
+	StringShuffler tryWithModsSS = new StringShuffler(rnd);
 
 	@Override
 	public String tryWithMods() {
-		return anyMods.get(
+		return tryWithModsSS.get(
 			"An idiot like you wouldn't know to try this with mods. You should thank me.",
-			"I almost think you could use mods here without making a complete fool of yourself."
+			"I almost think you could use mods here without making a complete fool of yourself.",
+			"You might be able to use mods other than NF here. But then again, it's you we're talking about."
 		);
 	}
 
+	StringShuffler tryWithModsListSS = new StringShuffler(rnd);
+	
 	@Override
 	public String tryWithMods(List<Mods> mods) {
-		return "Use " + Mods.toShortNamesContinuous(mods) + "... or else.";
+		String modnames = Mods.toShortNamesContinuous(mods);
+		return tryWithModsListSS.get(
+			"Use " + modnames + "... or else.",
+			modnames + " might not kill you.",
+			"Ever heard of " + modnames + "?"
+		);
 	}
 
 	@Override
@@ -112,6 +165,9 @@ public class Tsundere implements Language {
 		I'm not hugging you, I'm taking a rough chest measurement, because you clearly don't know what size to wear. 
 		Come here, you! /me slaps [user]
 		/me slaps. Sorry, that was just a reflex.
+		Clinginess is considered a bad thing, you idiot
+		Life is pain, go get a life, slaps
+		In the future, you'll thank me
 		*/
 		user.action("slaps " + apiUser.getUsername());
 	}
@@ -148,6 +204,9 @@ public class Tsundere implements Language {
 			"[http://osu.ppy.sh/b/3556 Chrono Cross - Yasunori Mitsuda - Time's Scar [Insane]]   95%: 33pp | 98%: 38pp | 99%: 41pp | 100%: 45pp | 2:19 ★ 3.32 ♫ 223.75 AR5 ♣",
 			"[http://osu.ppy.sh/b/4057 Dethklok - Duncan Hills Coffee Jingle [Hard]]   95%: 18pp | 98%: 24pp | 99%: 27pp | 100%: 33pp | 1:41 ★ 2.73 ♫ 120.25 AR6 ♣",
 			"[http://osu.ppy.sh/b/4204 They Might Be Giants - Istanbul (Not Constantinople) [Hard]]   95%: 24pp | 98%: 28pp | 99%: 30pp | 100%: 35pp | 2:25 ★ 2.96 ♫ 114 AR5 ♣",
+			"[http://osu.ppy.sh/b/4566 NicoNicoDouga - Farucon Pan! [Insane]]   95%: 55pp | 98%: 62pp | 99%: 66pp | 100%: 72pp | 1:01 ★ 3.92 ♫ 5000 AR6 ♥",
+			"[http://osu.ppy.sh/b/5168 I Love Egg - Egg Song [Easy]]   95%: 4pp | 98%: 6pp | 99%: 6pp | 100%: 8pp | 1:12 ★ 1.68 ♫ 377.36 AR3 ♥",
+			"[http://osu.ppy.sh/b/5186 World Famous - Robby's Song [Normal]]   community: 15pp | best: 22pp | 3:55 ★ 2.03 ♫ 1176.47 AR5 ♥",
 			"[http://osu.ppy.sh/b/7714 Rick Astley - Never Gonna Give You Up 2 [Easy]]   95%: 6pp | 98%: 9pp | 99%: 10pp | 100%: 13pp | 3:07 ★ 1.81 ♫ 113.6 AR4 ♣",
 			"[http://osu.ppy.sh/b/19496 Funtastic Power! - This is Sparta REMIX [This is madness!]]   95%: 3pp | 98%: 4pp | 99%: 5pp | 100%: 7pp | 2:07 ★ 1.57 ♫ 140.01 AR3 ♣",
 			"[http://osu.ppy.sh/b/21240 igiulamam - What I want you to do [COOKIE!]]   community: 31pp | best: 45pp | 2:07 ★ 2.67 ♫ 125 AR7 ♣",
@@ -333,7 +392,7 @@ public class Tsundere implements Language {
 			"[http://osu.ppy.sh/b/80756 Sum 41 - Thanks For Nothing [Normal]]   95%: 5pp | 98%: 6pp | 99%: 6pp | 100%: 8pp | 2:48 ★ 1.83 ♫ 204 AR3 ♠",
 			"[http://osu.ppy.sh/b/83091 Taylor Swift - Better Than Revenge [Easy]]   95%: 6pp | 98%: 7pp | 99%: 8pp | 100%: 9pp | 3:33 ★ 1.89 ♫ 145.97 AR2 ♠",
 			"[http://osu.ppy.sh/b/87230 Avril Lavigne - What The Hell [Tough]]   95%: 44pp | 98%: 56pp | 99%: 63pp | 100%: 75pp | 3:36 ★ 3.49 ♫ 150 AR8 ♠",
-			"[http://osu.ppy.sh/b/93979 Evanescence - Call Me When You're Sober [Easy]]   95%: 3pp | 98%: 4pp | 99%: 5pp | 100%: 6pp | 3:26 ★ 1.6 ♫ 186.96 AR3 �",
+			"[http://osu.ppy.sh/b/93979 Evanescence - Call Me When You're Sober [Easy]]   95%: 3pp | 98%: 4pp | 99%: 5pp | 100%: 6pp | 3:26 ★ 1.6 ♫ 186.96 AR3 ♠",
 			"[http://osu.ppy.sh/b/97010 Jonathan Coulton & GLaDOS - Want You Gone [Easy]]   95%: 3pp | 98%: 4pp | 99%: 4pp | 100%: 6pp | 2:12 ★ 1.62 ♫ 100 AR2 ♠",
 			"[http://osu.ppy.sh/b/97301 Jonathan Coulton & GLaDOS - Want You Gone [Easy]]   95%: 4pp | 98%: 5pp | 99%: 7pp | 100%: 8pp | 2:11 ★ 1.71 ♫ 100 AR4 ♠",
 			"[http://osu.ppy.sh/b/101924 Jonathan Coulton & GLaDOS - Want You Gone [Easy]]   95%: 6pp | 98%: 7pp | 99%: 7pp | 100%: 9pp | 2:12 ★ 1.86 ♫ 100 AR2 ♠",
@@ -372,7 +431,7 @@ public class Tsundere implements Language {
 
 	@Override
 	public String outOfRecommendations() {
-		return "Whaaat? Did you really just play all of those? You c-couldn't be asking me for recommendations just to hear me talk... W-we should go through the list again. You're free anyways, right?";
+		return "WHAT!? Did you seriously go through every recommendation I have? I c-can't believe you... Why don't we just go through the whole thing again? You're free anyways, right?";
 	}
 
 	@Override
@@ -392,7 +451,6 @@ public class Tsundere implements Language {
 			user.message("Are you serious!? If that map doesn't kill you, I will.");
 		} else if (estimates.getPPForAcc(1) / typicalPP < 0.333) {
 			user.message("Playing that won't impress me much... n-n-not that I'd want you to.");
-
 		}
 	}
 	
@@ -452,7 +510,8 @@ public class Tsundere implements Language {
 
 	@Override
 	public void optionalCommentOnLanguage(IRCBotUser user, OsuApiUser apiUser) {
-		user.message("H-hey... don't listen to anyone that says I'm tsundere! Those idiots don't even know how nice I can be!");
+		//TODO need better/more denial phrase(s)
+		return "Don't listen to anyone that says I'm tsundere! Those idiots don't even know how nice I can be!";
 	}
 
 	@Override
