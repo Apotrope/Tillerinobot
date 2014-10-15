@@ -12,7 +12,6 @@ import tillerino.tillerinobot.IRCBot.IRCBotUser;
 import tillerino.tillerinobot.RecommendationsManager.Recommendation;
 
 public class Tsundere implements Language {
-	
 	//Random object, used in StringShuffler
 	static final Random rnd = new Random();
 	//Recent counters, reset if inactive for a while
@@ -34,18 +33,18 @@ public class Tsundere implements Language {
 				"It hasn't even been 5 minutes...",
 				"Today, " + username + " worked on their disappearing act."
 			);
-		} else if (inactiveTime < 4l * 24 * 60 * 60 * 1000) { 
+		} else if (inactiveTime < 4l * 24 * 60 * 60 * 1000) {
 			greeting = welcomeUserShuffler.get(
 				//TODO more normal welcome messages
 				"Back again? I'm just here because I have nothing else to do! Don't read into it!",
 				"H-hey...",
 				"♫ Home again, home again, jiggety-jig ♫ .... What?",
-				"4",
+				"Guess what? I've discovered your purpose in life. It's not the sort of thing I'm comfortable sharing, though.",
 				"5",
 				"6",
 				"7"
 			);
-		} else { 
+		} else {
 			greeting = welcomeUserLongShuffler.get(
 				"Where have you been, " + username + "!? I-it's not like I missed you or anything...",
 				"How was your vacation, " + username + "?",
@@ -57,32 +56,32 @@ public class Tsundere implements Language {
 		if (inactiveTime > 4 * 60 * 60 * 1000) {
 			recentRecommendations = 0;
 			recentHugs = 0;
-		}		
+		}
 	}
 	
 	StringShuffler unknownBeatmapShuffler = new StringShuffler(rnd);
-
+	
 	@Override
 	public String unknownBeatmap() {
 		return unknownBeatmapShuffler.get(
 			"Are you stupid? No one plays that map!",
 			"Oh, really? Never heard of it.",
 			"Yeah right, call me when you manage to get pp with that."
-		);	
+		);
 	}
-
+	
 	@Override
 	public String internalException(String marker) {
 		return "Huh? Why isn't this working? I can't imagine this being anything other than your fault."
 		+ " Mention incident " + marker + " to @Tillerino or /u/Tillerino if this keeps happening.";
 	}
-
+	
 	@Override
 	public String externalException(String marker) {
 		return "Sorry, the osu! server was saying some idiotic nonsense and I felt like slapping them instead of you. Try asking whatever it was again."
 		+ " If the server doesn't shut up, ask @Tillerino or /u/Tillerino (reference " + marker + ") to take care of it.";
 	}
-
+	
 	StringShuffler noInformationForModsShortShuffler = new StringShuffler(rnd);
 	
 	@Override
@@ -93,7 +92,7 @@ public class Tsundere implements Language {
 			"Nomod loves you"
 		);
 	}
-
+	
 	StringShuffler noInformationForModsShuffler = new StringShuffler(rnd);
 	
 	@Override
@@ -104,24 +103,24 @@ public class Tsundere implements Language {
 			"INSUFFICIENT DATA FOR MEANINGFUL ANSWER."
 		);
 	}
-
+	
 	@Override
 	public String unknownCommand(String command) {
 		return command + "? I think you've got the hierarchy backwards. You do what I tell you, and I respond if I feel like it. Type !help if you're too stupid to even tell what I want.";
 	}
-
+	
 	@Override
 	public String malformattedMods(String mods) {
 		return "You dummy... you can't just make up your own mods. If you can't write normal things like !with HR or !with HDDT, I won't even to bother trying to interpret.";
 	}
-
+	
 	@Override
 	public String noLastSongInfo() {
 		return "You didn't even mention a song. Wait, were you trying to use those mods on ME!?";
 	}
-
+	
 	StringShuffler tryWithModsShuffler = new StringShuffler(rnd);
-
+	
 	@Override
 	public String tryWithMods() {
 		return tryWithModsShuffler.get(
@@ -130,7 +129,7 @@ public class Tsundere implements Language {
 			"You might be able to use mods other than NF here. But then again, it's you we're talking about."
 		);
 	}
-
+	
 	StringShuffler tryWithModsListShuffler = new StringShuffler(rnd);
 	
 	@Override
@@ -142,12 +141,12 @@ public class Tsundere implements Language {
 			"Ever heard of " + modnames + "?"
 		);
 	}
-
+	
 	@Override
 	public String excuseForError() {
 		return "Did you say something? It's not l-like I care what you have to say, but you should say it again so you can pretend I do.";
 	}
-
+	
 	@Override
 	public String complaint() {
 		return "Whaaaat!? How could you say something like... oh, that beatmap? Actually that's there because I hated it and wanted to test you. Aren't you glad having something in common with me?";
@@ -155,26 +154,69 @@ public class Tsundere implements Language {
 	
 	@Override
 	public void hug(IRCBotUser user, OsuApiUser apiUser) {
+		//TODO Responses move from tsun to dere with more hug attempts (and maybe recommendations)
 		recentHugs++;
-		/*TODO Responses move from tsun to dere with more hug attempts (and maybe recommendations)
-		here's something on your back, you slob. Here, let me get that
-		Wow, you suck at hugs. Someone needs to teach you. 
-		I w-wasn't trying to hug you! I just lost my balance for a second and fell onto you.
-		I'm not hugging you, I'm taking a rough chest measurement, because you clearly don't know what size to wear. 
-		Come here, you! /me slaps [user]
-		/me slaps. Sorry, that was just a reflex.
-		Clinginess is considered a bad thing, you idiot
-		Life is pain, go get a life, slaps
-		In the future, you'll thank me
-		*/
-		user.action("slaps " + apiUser.getUsername());
+		int baseLevel = (int)(Math.log(recentHugs) / Math.log(2.236) + Math.log(recentRecommendations) / Math.log(5)); //Floor sum logs base sqrt(5) and 5
+		int hugLevel = (baseLevel<8?baseLevel:8) + rnd.nextInt(3) + rnd.nextInt(3) - 2;  //Ranges from -2 to 10
+		switch (hugLevel) {
+			default:
+				user.action("completely ignores " + apiUser.getUsername() + "'s request for a hug");
+				break;
+			case 0:
+				user.action("slaps " + apiUser.getUsername());
+				user.message("Sorry, that was just a reflex.");
+				break;
+			case 1:
+				user.message("Wow, you suck at hugs. Someone needs to teach you.");
+				user.action("hugs " + apiUser.getUsername());
+				break;
+			case 2:
+				user.message("There's something on your back, you slob. Here, let me get that.");
+				user.action("hugs " + apiUser.getUsername());
+				break;
+			case 3:
+				//Kind of redundant: "I'm not hugging you, I'm taking a rough chest measurement, because you clearly don't know what size to wear."
+				user.message("");
+				user.action("hugs " + apiUser.getUsername());
+				break;
+			case 4:
+				user.action("hugs " + apiUser.getUsername());
+				user.message("I w-wasn't trying to hug you! I just lost my balance for a second and fell onto you.");
+				break;
+			case 5:
+				//Something
+				user.action("slaps " + apiUser.getUsername());
+				user.message("");
+				break;
+			case 6:
+				user.action("hugs " + apiUser.getUsername());
+				user.message("Don't misunderstand, it's not like I like you or anything...");
+				break;
+			case 7:
+				user.message("Clinginess is considered a bad thing, you idiot.");
+				user.action("hugs " + apiUser.getUsername());
+				break;
+			case 8:
+				user.message("S-stupid. It's l-like you enjoy hugging me or something.");
+				user.action("hugs " + apiUser.getUsername());
+				break;
+			case 9:
+				user.action("hugs " + apiUser.getUsername());
+				user.message("I'm not letting you get away.");
+				break;
+			case 10:
+				user.action("slaps " + apiUser.getUsername() + " hard");
+				user.message("Hehe. You know you like it.");
+				user.action("hugs " + apiUser.getUsername() + " happily");
+				break;
+		}
 	}
-
+	
 	@Override
 	public String help() {
 		return "Feeling helpless (as always)?  Check https://twitter.com/Tillerinobot for status and updates, and https://github.com/Tillerino/Tillerinobot/wiki for commands. Where would you be without me here to rescue you?";
 	}
-
+	
 	@Override
 	public String faq() {
 		return "Really, every answer on this list should be intuitively obvious, but it's understandable if -you- need to read it: https://github.com/Tillerino/Tillerinobot/wiki/FAQ";
@@ -440,31 +482,31 @@ public class Tsundere implements Language {
 		};
 		return fakes[rnd.nextInt(fakes.length)];
 	}
-
+	
 	@Override
 	public String featureRankRestricted(String feature, int minRank, OsuApiUser user) {
 		return "Sorry, " + feature + " is only available for people that can actually play osu!. Passing rank " + minRank + " will work, not that you have any hope of ever getting there.";
 	}
-
+	
 	@Override
 	public String mixedNomodAndMods() {
 		return "What is this? Schrödinger's mod? I have a recommendation, but the superposition would collapse as soon as it was observed. It's not like I like you enough to break the laws of physics anyways!";
 	}
-
+	
 	@Override
 	public String outOfRecommendations() {
 		//TODO can't figure out how to word this one
 		return "WHAT!? Did you seriously go through every recommendation I have? I c-can't believe you... Why don't we just go through the whole thing again? You're free anyways, right?";
 	}
-
+	
 	@Override
 	public String notRanked() {
 		return "Hmph. That beatmap isn't going to make anyone's pp bigger.";
 	}
 	
 	StringShuffler optionalCommentOnNPHardShuffler = new StringShuffler(rnd);
-	StringShuffler optionalCommentOnNPEasyShuffler = new StringShuffler(rnd);	
-
+	StringShuffler optionalCommentOnNPEasyShuffler = new StringShuffler(rnd);
+	
 	@Override
 	public void optionalCommentOnNP(IRCBotUser user, OsuApiUser apiUser, BeatmapMeta meta) {
 		//TODO more replies
@@ -492,7 +534,7 @@ public class Tsundere implements Language {
 	}
 	
 	StringShuffler optionalCommentOnWithHardShuffler = new StringShuffler(rnd);
-	StringShuffler optionalCommentOnWithEasyShuffler = new StringShuffler(rnd);		
+	StringShuffler optionalCommentOnWithEasyShuffler = new StringShuffler(rnd);
 	
 	@Override
 	public void optionalCommentOnWith(IRCBotUser user, OsuApiUser apiUser, BeatmapMeta meta) {
@@ -538,39 +580,36 @@ public class Tsundere implements Language {
 	}
 	
 	transient boolean changed;
-
+	
 	@Override
 	public boolean isChanged() {
 		return changed;
 	}
-
+	
 	@Override
 	public void setChanged(boolean changed) {
 		this.changed = changed;
 	}
-
+	
 	@Override
 	public String invalidAccuracy(String acc) {
 		//TODO maybe something that doesn't mention player names, just in case
 		return "Not even thelewa is capable of that kind of accuracy.";
 	}
-
+	
 	@Override
 	public String noPercentageEstimates() {
 		return "I don't know. I'm not your personal genie. You probably don't even have a lamp for me!";
 	}
 	
-	StringShuffler optionalCommentOnLanguageShuffler = new StringShuffler(rnd);	
-
+	StringShuffler optionalCommentOnLanguageShuffler = new StringShuffler(rnd);
 	@Override
 	public void optionalCommentOnLanguage(IRCBotUser user, OsuApiUser apiUser) {
 		//TODO need better/more denial phrase(s)
 		return "Don't listen to anyone that says I'm tsundere! Those idiots don't even know how nice I can be!";
 	}
-
 	@Override
 	public String invalidChoice(String invalid, String choices) {
 		return "What does \"" + invalid + "\" even mean!? If using two fingers is too much, you could always try singletapping each letter: " + choices + "!";
 	}
-
 }
