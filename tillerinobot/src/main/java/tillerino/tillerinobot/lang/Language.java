@@ -177,15 +177,6 @@ public interface Language {
 	String faq();
 
 	/**
-	 * A part of the !recommend command was not recognized.
-	 * 
-	 * @param param
-	 *            the part of the command which was not recognized.
-	 * @return
-	 */
-	String unknownRecommendationParameter(String param);
-
-	/**
 	 * A feature is rank restricted.
 	 * 
 	 * @param feature
@@ -207,7 +198,9 @@ public interface Language {
 	String mixedNomodAndMods();
 
 	/**
-	 * The current recommendations sampler is empty. "try again to start over".
+	 * The current recommendations sampler is empty. User can use other
+	 * recommendation options or command !reset to forget all given
+	 * recommendations.
 	 * 
 	 * @return
 	 */
@@ -277,4 +270,12 @@ public interface Language {
 	 *            The available choices.
 	 */
 	public String invalidChoice(String invalid, String choices);
+
+	/**
+	 * User formatted setting options wrong.
+	 * 
+	 * @return a message which indicates that the correct format is set option
+	 *         value
+	 */
+	String setFormat();
 }
