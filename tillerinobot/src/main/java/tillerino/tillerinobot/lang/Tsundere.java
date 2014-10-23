@@ -35,14 +35,13 @@ public class Tsundere implements Language {
 			);
 		} else if (inactiveTime < 4l * 24 * 60 * 60 * 1000) {
 			greeting = welcomeUserShuffler.get(
-				//TODO more normal welcome messages
 				"Back again? I'm just here because I have nothing else to do! Don't read into it!",
 				"H-hey...",
 				"♫ Home again, home again, jiggety-jig ♫ .... What?",
 				"Guess what? I've discovered your purpose in life. It's not the sort of thing I'm comfortable sharing, though.",
-				"5",
-				"6",
-				"7"
+				"You haven't been talking to any other chatbots, have you?",
+				"Huh? What are you doing here!?",
+				username + ", go do something stupid so I can scold you for it."
 			);
 		} else {
 			greeting = welcomeUserLongShuffler.get(
@@ -154,60 +153,59 @@ public class Tsundere implements Language {
 	
 	@Override
 	public void hug(IRCBotUser user, OsuApiUser apiUser) {
-		//TODO Responses move from tsun to dere with more hug attempts (and maybe recommendations)
+		//Responses move from tsun to dere with more hug attempts and recommendations
 		recentHugs++;
-		int baseLevel = (int)(Math.log(recentHugs) / Math.log(2.236) + Math.log(recentRecommendations) / Math.log(5)); //Floor sum logs base sqrt(5) and 5
+		int baseLevel = (int)(Math.log(recentHugs) / Math.log(2.236) + Math.log(recentRecommendations) / Math.log(5)); //Sum logs base sqrt(5) and 5
 		int hugLevel = (baseLevel<8?baseLevel:8) + rnd.nextInt(3) + rnd.nextInt(3) - 2;  //Ranges from -2 to 10
+		String username = apiUser.getUsername();
 		switch (hugLevel) {
 			default:
-				user.action("completely ignores " + apiUser.getUsername() + "'s request for a hug");
+				user.action("completely ignores " + username + "'s request for a hug");
 				break;
 			case 0:
-				user.action("slaps " + apiUser.getUsername());
+				user.action("slaps " + username);
 				user.message("Sorry, that was just a reflex.");
 				break;
 			case 1:
+				user.action("hugs " + username);
 				user.message("Wow, you suck at hugs. Someone needs to teach you.");
-				user.action("hugs " + apiUser.getUsername());
 				break;
 			case 2:
 				user.message("There's something on your back, you slob. Here, let me get that.");
-				user.action("hugs " + apiUser.getUsername());
+				user.action("hugs " + username);
 				break;
 			case 3:
-				//Kind of redundant: "I'm not hugging you, I'm taking a rough chest measurement, because you clearly don't know what size to wear."
-				user.message("");
-				user.action("hugs " + apiUser.getUsername());
-				break;
-			case 4:
-				user.action("hugs " + apiUser.getUsername());
+				user.action("hugs " + username);
 				user.message("I w-wasn't trying to hug you! I just lost my balance for a second and fell onto you.");
 				break;
+			case 4:
+				user.action("hugs " + username);
+				user.message("The hardest part of hugging you is letting go. I think you sweat too much.");
+				break;
 			case 5:
-				//Something
-				user.action("slaps " + apiUser.getUsername());
-				user.message("");
+				user.action("slaps " + username);
+				user.message("Whoops... well, you probably deserved it anyways.");
 				break;
 			case 6:
-				user.action("hugs " + apiUser.getUsername());
+				user.action("hugs " + username);
 				user.message("Don't misunderstand, it's not like I like you or anything...");
 				break;
 			case 7:
 				user.message("Clinginess is considered a bad thing, you idiot.");
-				user.action("hugs " + apiUser.getUsername());
+				user.action("hugs " + username);
 				break;
 			case 8:
 				user.message("S-stupid. It's l-like you enjoy hugging me or something.");
-				user.action("hugs " + apiUser.getUsername());
+				user.action("hugs " + username);
 				break;
 			case 9:
-				user.action("hugs " + apiUser.getUsername());
-				user.message("I'm not letting you get away.");
+				user.action("hugs " + username);
+				user.message("Don't forget: you're here forever.");
 				break;
 			case 10:
-				user.action("slaps " + apiUser.getUsername() + " hard");
+				user.action("slaps " + username + " hard");
 				user.message("Hehe. You know you like it.");
-				user.action("hugs " + apiUser.getUsername() + " happily");
+				user.action("hugs " + username + " happily");
 				break;
 		}
 	}
@@ -495,8 +493,7 @@ public class Tsundere implements Language {
 	
 	@Override
 	public String outOfRecommendations() {
-		//TODO can't figure out how to word this one
-		return "WHAT!? Did you seriously go through every recommendation I have? I c-can't believe you... Why don't we just go through the whole thing again? You're free anyways, right?";
+		return "WHAT!? Did you seriously go through every recommendation I have? I c-can't believe you... Well, let's run through it again. It's not like you have anything else to do.";
 	}
 	
 	@Override
@@ -509,57 +506,30 @@ public class Tsundere implements Language {
 	
 	@Override
 	public void optionalCommentOnNP(IRCBotUser user, OsuApiUser apiUser, BeatmapMeta meta) {
-		//TODO more replies
-		if (!(meta.getEstimates() instanceof PercentageEstimates)) {
+		if (rnd.NextFloat() > 0.25 || !(meta.getEstimates() instanceof PercentageEstimates)) {
 			return;
 		}
 		PercentageEstimates estimates = (PercentageEstimates) meta.getEstimates();
 		double typicalPP = (apiUser.getPp() / 20.0);
-		String optionalComment = "";
 		if (estimates.getPPForAcc(.95) / typicalPP > 2.0) {
-			optionalComment = optionalCommentOnNPHardShuffler.get(
-				"Are you serious!? If that map doesn't kill you, I will.",
-				"",
-				""
-			);
-			user.message(optionalComment);
+			user.message("Are you serious!? If that map doesn't kill you, I will.");
 		} else if (estimates.getPPForAcc(1) / typicalPP < 0.333) {
-			optionalComment = optionalCommentOnNPEasyShuffler.get(
-				"Playing that won't impress me much... n-n-not that I'd want you to.",
-				"",
-				""
-			);
-			user.message(optionalComment);
+			user.message("Playing that won't impress me much... n-n-not that I'd want you to.");
 		}
 	}
 	
-	StringShuffler optionalCommentOnWithHardShuffler = new StringShuffler(rnd);
-	StringShuffler optionalCommentOnWithEasyShuffler = new StringShuffler(rnd);
-	
 	@Override
 	public void optionalCommentOnWith(IRCBotUser user, OsuApiUser apiUser, BeatmapMeta meta) {
-		//TODO more replies
 		//The following checks are probably redundant, but they don't hurt anyone either.
-		if (!(meta.getEstimates() instanceof PercentageEstimates)) {
+		if (rnd.NextFloat() > 0.25 || !(meta.getEstimates() instanceof PercentageEstimates)) {
 			return;
 		}
 		PercentageEstimates estimates = (PercentageEstimates) meta.getEstimates();
 		double typicalPP = (apiUser.getPp() / 20);
-		String optionalComment = "";
 		if (estimates.getPPForAcc(.95) / typicalPP > 2.0) {
-			optionalComment = optionalCommentOnWithHardShuffler.get(
-				"You idiot! You're going to get hurt trying mods like that!",
-				"",
-				""
-			);
-			user.message(optionalComment);
+			user.message("You idiot! You're going to get hurt trying mods like that!");
 		} else if (estimates.getPPForAcc(1) / typicalPP < 0.5) {
-			optionalComment = optionalCommentOnWithEasyShuffler.get(
-				"If you wanted to be treated like a baby, you could just ask... no, go ahead and play.",
-				"",
-				""
-			);
-			user.message(optionalComment);
+			user.message("If you wanted to be treated like a baby, you could just ask... no, go ahead and play.");
 		}
 	}
 	
@@ -591,10 +561,19 @@ public class Tsundere implements Language {
 		this.changed = changed;
 	}
 	
+	StringShuffler invalidAccuracyShuffler = new StringShuffler(rnd);
+	
 	@Override
 	public String invalidAccuracy(String acc) {
-		//TODO maybe something that doesn't mention player names, just in case
-		return "Not even thelewa is capable of that kind of accuracy.";
+		return invalidAccuracyShuffler.get(
+			"\"The first principle is that you must not fool yourself - and you are the easiest person to fool.\"",
+			"\"Success is the ability to go from one failure to another with no loss of enthusiasm.\"",
+			"\"Never attribute to malice that which is adequately explained by stupidity.\"",
+			"\"The only real mistake is the one from which we learn nothing.\"",
+			"\"Only two things are infinite, the universe and human stupidity, and I'm not sure about the former.\"",
+			"\"Sometimes a man wants to be stupid if it lets him do a thing his cleverness forbids.\"",
+			"\"Honestly, if you were any slower, you’d be going backward.\""
+		);
 	}
 	
 	@Override
@@ -603,10 +582,14 @@ public class Tsundere implements Language {
 	}
 	
 	StringShuffler optionalCommentOnLanguageShuffler = new StringShuffler(rnd);
+	
 	@Override
 	public void optionalCommentOnLanguage(IRCBotUser user, OsuApiUser apiUser) {
-		//TODO need better/more denial phrase(s)
-		return "Don't listen to anyone that says I'm tsundere! Those idiots don't even know how nice I can be!";
+		return optionalCommentOnLanguageShuffler.get(
+			"You seem like just the sort of idiot that wouldn't believe me if I said I wasn't tsundere.",
+			"What kind of idiot wants a tsundere robot!? That's seriously the dumbest idea I've ever heard.",
+			"Fine, but I'm only acting tsundere because I want to. It has nothing to do with you!"
+		);
 	}
 	@Override
 	public String invalidChoice(String invalid, String choices) {
