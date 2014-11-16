@@ -14,6 +14,9 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.tillerino.osuApiModel.OsuApiUser;
+import org.tillerino.osuApiModel.types.BeatmapId;
+import org.tillerino.osuApiModel.types.BitwiseMods;
+import org.tillerino.osuApiModel.types.UserId;
 
 import tillerino.tillerinobot.lang.Default;
 import tillerino.tillerinobot.lang.Language;
@@ -32,10 +35,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
-import lombok.AllArgsConstructor;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -69,11 +72,22 @@ public class UserDataManager extends AbstractMBeanRegistration implements UserDa
 		}
 		
 		@Data
-		@NoArgsConstructor
-		@AllArgsConstructor
 		public static class BeatmapWithMods {
+			public BeatmapWithMods(@BeatmapId int beatmap,
+					@BitwiseMods long mods) {
+				super();
+				this.beatmap = beatmap;
+				this.mods = mods;
+			}
+
+			@BeatmapId
+			@Getter(onMethod = @__(@BeatmapId))
+			@Setter(onParam = @__(@BeatmapId))
 			int beatmap;
 
+			@BitwiseMods
+			@Getter(onMethod = @__(@BitwiseMods))
+			@Setter(onParam = @__(@BitwiseMods))
 			long mods;
 		}
 
@@ -142,6 +156,7 @@ public class UserDataManager extends AbstractMBeanRegistration implements UserDa
 
 		transient BotBackend backend;
 
+		@UserId
 		transient int userid;
 
 		public int getHearts() throws SQLException, IOException {
@@ -192,6 +207,7 @@ public class UserDataManager extends AbstractMBeanRegistration implements UserDa
 			.expireAfterAccess(1, TimeUnit.HOURS).maximumSize(1000).recordStats()
 			.removalListener(new RemovalListener<Integer, UserData>() {
 				@Override
+				@SuppressFBWarnings(value = "TQ")
 				public void onRemoval(RemovalNotification<Integer, UserData> notification) {
 					try {
 						saveOptions(notification.getKey(), notification.getValue());
@@ -216,7 +232,7 @@ public class UserDataManager extends AbstractMBeanRegistration implements UserDa
 	static Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting()
 			.create();
 	
-	private UserData load(int key) throws SQLException {
+	private UserData load(@UserId int key) throws SQLException {
 		String rawOptions = backend.getOptions(key);
 		
 		UserData options;
@@ -232,7 +248,7 @@ public class UserDataManager extends AbstractMBeanRegistration implements UserDa
 		return options;
 	}
 
-	void saveOptions(int userid, UserData options) throws SQLException {
+	void saveOptions(@UserId int userid, UserData options) throws SQLException {
 		if(!options.isChanged()) {
 			return;
 		}
